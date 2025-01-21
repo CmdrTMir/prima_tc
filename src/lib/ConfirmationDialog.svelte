@@ -3,6 +3,8 @@
 	import type { TourDetails } from '$lib/TourDetails';
 	import { reassignTour } from '$lib/api';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import { Label } from '$lib/components/ui/label/index.js';
+	import { Textarea } from "$lib/components/ui/textarea/index.js";
 
 	let showFailed = $state<boolean>(false);
 
@@ -10,6 +12,18 @@
 		tour: TourDetails | undefined;
 	}
 	let { tour = $bindable() }: Props = $props();
+
+	const getPhoneNumbers = (tour: TourDetails) => {
+		let phoneArray: string = "";
+		for(var eve of tour.events) {
+			if(eve.phone != null)
+			{
+				let infoString = eve.last_name + ": " + eve.phone + "\n";
+				phoneArray += infoString;
+			}
+		} 
+		return phoneArray;
+	};
 
 	const handleConfirm = async () => {
 		showFailed = false;
@@ -22,6 +36,8 @@
 			}
 		}
 	};
+
+	const customers = getPhoneNumbers(tour!);
 </script>
 
 <AlertDialog.Root>
@@ -42,16 +58,23 @@
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
-<!-- Hier die Telefonnummer des Kunden hinzufügen
-Und das Kommentarfeld -->
+<!-- Kommentarfeld in db schreiben -->
 <AlertDialog.Root open={showFailed}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
 			<AlertDialog.Title>Die Tour konnte nicht redisponiert werden</AlertDialog.Title>
-			<AlertDialog.Description>Bitte informieren Sie den Kunden.</AlertDialog.Description>
+			<AlertDialog.Description>Bitte informieren Sie den/die Kunden.</AlertDialog.Description>
 		</AlertDialog.Header>
+		<div class="whitespace-pre">
+			{customers}
+		</div>
+		<div class="grid w-full gap-1.5">
+			<Label for="message">Grund angeben:</Label>
+			<Textarea placeholder="Bitte schildern sie den Grund, weshalb die Tour nicht angetreten werden konnte." id="message" />
+			<Button>Eintragen</Button>
+		  </div>
 		<AlertDialog.Footer>
-			<AlertDialog.Action>Ok</AlertDialog.Action>
+			<AlertDialog.Action>Zurück</AlertDialog.Action>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
