@@ -37,6 +37,11 @@
 		}
 	};
 
+	let value = $state("");
+	const handleComment = async () => {
+
+	};
+
 	const customers = getPhoneNumbers(tour!);
 </script>
 
@@ -58,7 +63,7 @@
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
-<!-- Kommentarfeld in db schreiben -->
+<!-- Kommentarfeld in db schreiben --- wie? form, onclick, wo server file? -->
 <AlertDialog.Root open={showFailed}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
@@ -68,13 +73,14 @@
 		<div class="whitespace-pre">
 			{customers}
 		</div>
-		<div class="grid w-full gap-1.5">
+		<form class="mb-6" method="POST" action="?/assign">
+		 <div class="grid w-full gap-1.5">
 			<Label for="message">Grund angeben:</Label>
-			<Textarea placeholder="Bitte schildern sie den Grund, weshalb die Tour nicht angetreten werden konnte." id="message" />
-			<Button>Eintragen</Button>
-		  </div>
-		<AlertDialog.Footer>
-			<AlertDialog.Action>Zurück</AlertDialog.Action>
-		</AlertDialog.Footer>
+			<Textarea bind:value={value} placeholder="Bitte schildern sie den Grund, weshalb die Tour nicht angetreten werden konnte." id="message" />
+		 </div>
+		 <AlertDialog.Footer>
+			<AlertDialog.Action>Eintragen</AlertDialog.Action>
+		 </AlertDialog.Footer>
+		</form>
 	</AlertDialog.Content>
 </AlertDialog.Root>
