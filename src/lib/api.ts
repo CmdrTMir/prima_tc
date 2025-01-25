@@ -51,6 +51,17 @@ export const updateTour = async (tourId: number, vehicleId: number) => {
 	});
 };
 
+export const tourCancellation = async (tourId: number, reason: string) => {
+	console.log("hello from api");
+	return await fetch('/api/tour', {
+		method: 'POST',
+		body: JSON.stringify({
+			tour_id: tourId,
+			comment: reason
+		})
+	});
+};
+
 export const removeAvailability = async (vehicleId: number, from: Date, to: Date) => {
 	return await fetch('/api/availability', {
 		method: 'DELETE',

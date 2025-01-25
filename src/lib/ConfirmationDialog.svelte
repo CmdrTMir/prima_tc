@@ -5,6 +5,8 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Textarea } from "$lib/components/ui/textarea/index.js";
+	import { toast } from 'svelte-sonner';
+	import { tourCancellation } from '$lib/api';
 
 	let showFailed = $state<boolean>(false);
 
@@ -16,7 +18,7 @@
 	const getPhoneNumbers = (tour: TourDetails) => {
 		let phoneArray: string = "";
 		for(var eve of tour.events) {
-			if(eve.phone != null)
+			if(eve.is_pickup && eve.phone != null)
 			{
 				let infoString = eve.last_name + ": " + eve.phone + "\n";
 				phoneArray += infoString;
@@ -39,7 +41,20 @@
 
 	let value = $state("");
 	const handleComment = async () => {
-
+		if(value == "")
+		{
+			toast.warning('Sie müssen einen Grund für den Ausfall angeben!');
+		} 
+		if(tour)
+		{
+			let ok = await tourCancellation(tour.tour_id, value);
+			if(!ok.ok) {
+				toast(`Server Fehler. Der Grund des Ausfalls konnte nicht eingetragen werden. (${ok.status}: ${ok.statusText})`);
+			}
+		}
+		else {
+			toast.warning('Tour nicht gefunden.');
+		}		
 	};
 
 	const customers = getPhoneNumbers(tour!);
@@ -47,13 +62,13 @@
 
 <AlertDialog.Root>
 	<AlertDialog.Trigger
-		><Button variant="destructive">Tour redisponieren</Button></AlertDialog.Trigger
+		><Button variant="destructive">Ausfall melden</Button></AlertDialog.Trigger
 	>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
 			<AlertDialog.Title>Sind Sie sicher?</AlertDialog.Title>
 			<AlertDialog.Description>
-				Diese Fahrt wird (falls möglich) einem anderen Anbieter zugewiesen.
+				Diese Fahrt wird aus der Buchung gelöscht.
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
@@ -63,24 +78,21 @@
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
-<!-- Kommentarfeld in db schreiben --- wie? form, onclick, wo server file? -->
 <AlertDialog.Root open={showFailed}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
-			<AlertDialog.Title>Die Tour konnte nicht redisponiert werden</AlertDialog.Title>
+			<AlertDialog.Title>Ausfall der Tour melden</AlertDialog.Title>
 			<AlertDialog.Description>Bitte informieren Sie den/die Kunden.</AlertDialog.Description>
 		</AlertDialog.Header>
 		<div class="whitespace-pre">
 			{customers}
 		</div>
-		<form class="mb-6" method="POST" action="?/assign">
 		 <div class="grid w-full gap-1.5">
 			<Label for="message">Grund angeben:</Label>
-			<Textarea bind:value={value} placeholder="Bitte schildern sie den Grund, weshalb die Tour nicht angetreten werden konnte." id="message" />
+			<Textarea bind:value={value} placeholder="Bitte schildern Sie den Grund, weshalb die Tour nicht angetreten werden konnte." id="message" />
 		 </div>
 		 <AlertDialog.Footer>
-			<AlertDialog.Action>Eintragen</AlertDialog.Action>
+			<AlertDialog.Action on:click={handleComment}>Eintragen</AlertDialog.Action>
 		 </AlertDialog.Footer>
-		</form>
 	</AlertDialog.Content>
 </AlertDialog.Root>
