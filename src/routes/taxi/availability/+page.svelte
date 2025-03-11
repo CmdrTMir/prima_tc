@@ -23,7 +23,7 @@
 	import TourDialog from '$lib/ui/TourDialog.svelte';
 	import AddVehicle from './AddVehicle.svelte';
 	import { onMount } from 'svelte';
-	import type { Tours } from '$lib/server/db/getTours';
+	import type { ToursWithRequests } from '$lib/server/db/getTours';
 	import Message from '$lib/ui/Message.svelte';
 	import type { UnixtimeMs } from '$lib/util/UnixtimeMs';
 	import type { Range } from './Range';
@@ -64,7 +64,7 @@
 	const df = new DateFormatter('de-DE', { dateStyle: 'long' });
 
 	let selectedTour = $state<{
-		tours: Tours | undefined;
+		tours: ToursWithRequests | undefined;
 		isAdmin: boolean;
 		companyCoordinates: LngLatLike;
 	}>({
@@ -119,7 +119,7 @@
 		copy.setHours(todayDay.getHours() + 8);
 		return copy;
 	});
-
+	console.log({ tours: data.tours });
 	const overlaps = (a: Range, b: Range) => a.startTime < b.endTime && a.endTime > b.startTime;
 
 	const hasTour = (vehicleId: number, cell: Range) =>
@@ -214,7 +214,7 @@
 	// Drag & Drop
 	// -----------
 	type Drag = {
-		tours: Tours;
+		tours: ToursWithRequests;
 		vehicleId: number;
 	};
 
@@ -523,4 +523,4 @@
 	</Card.Content>
 </Card.Root>
 
-<TourDialog bind:open={selectedTour} />
+<TourDialog bind:tours={selectedTour.tours} isAdmin={selectedTour.isAdmin} />

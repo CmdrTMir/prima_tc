@@ -6,9 +6,9 @@
 	import UserRound from 'lucide-svelte/icons/user-round';
 	import CarTaxiFront from 'lucide-svelte/icons/car-taxi-front';
 	import Building2 from 'lucide-svelte/icons/building-2';
-	import ListChecks from 'lucide-svelte/icons/list-checks';
 	import UsersRound from 'lucide-svelte/icons/users-round';
 	import CircleAlert from 'lucide-svelte/icons/circle-alert';
+	import Receipt from 'lucide-svelte/icons/receipt';
 
 	import * as Alert from '$lib/shadcn/alert';
 
@@ -23,13 +23,13 @@
 		...(data.isLoggedIn ? [{ title: t.menu.bookings, href: '/bookings', Icon: TicketCheck }] : [])
 	];
 	const taxiOwnerItems: Array<MenuItem> = [
+		{ title: t.menu.accounting, href: '/taxi/accounting', Icon: Receipt },
 		{ title: t.menu.availability, href: '/taxi/availability', Icon: CarTaxiFront },
 		{ title: t.menu.company, href: '/taxi/company', Icon: Building2 },
-		{ title: t.menu.completedTours, href: '/taxi/tours', Icon: ListChecks },
 		{ title: t.menu.employees, href: '/taxi/members', Icon: UsersRound }
 	];
 	const adminItems: Array<MenuItem> = [
-		{ title: t.menu.completedTours, href: '/admin/tours', Icon: ListChecks },
+		{ title: t.menu.accounting, href: '/admin/accounting', Icon: Receipt },
 		{ title: t.menu.companies, href: '/admin/taxi-owners', Icon: CarTaxiFront }
 	];
 
@@ -55,11 +55,10 @@
 			</Alert.Description>
 		</Alert.Root>
 	{/if}
-	<div
-		id="searchmask-container"
-		class="grow overflow-y-auto p-2 pb-6 md:flex md:items-center md:justify-center"
-	>
-		{@render children()}
+	<div class="flex grow flex-col overflow-y-auto">
+		<div id="searchmask-container" class="grow p-2 pb-6 md:flex md:items-center md:justify-center">
+			{@render children()}
+		</div>
 	</div>
 	<Menu class="shrink" {items} />
 </div>
